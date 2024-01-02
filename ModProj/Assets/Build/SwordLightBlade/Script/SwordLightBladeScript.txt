@@ -1,11 +1,14 @@
 
-local table = {}
+local table = {
+    scaleUpDmg = true,
+    }
 
 
 function table:Awake()
     self.initLocalScale = self.blade.localScale
     self.blade.localScale = UE.Vector3.zero
     self.blade.gameObject:SetActive(false)
+    self.bladeCol.gameObject:SetActive(false)
     self.host.interact:SetAsNoTrail()
     self.scaleActId = -1
     self.lightUp = false
@@ -28,7 +31,10 @@ function table:DoScale(scaleUp)
         
     if (scaleUp) then
         blade.gameObject:SetActive(true)
+        self.bladeCol.gameObject:SetActive(true)
+        so.scalingForward = true
     else     
+        self.scaleUpDmg = true
         so:BreakAllStab()
     end
     
@@ -37,8 +43,10 @@ function table:DoScale(scaleUp)
         function (sche, t, s)
             self.blade.localScale = UE.Vector3.Lerp(startScale, endScale, CL.EasingEquations.QuadEaseInOut(t, 0, 1, s))
             if (t>=s) then
+                so.scalingForward = false
                 if (scaleUp == false) then
-                    self.blade.gameObject:SetActive(false)                   
+                    self.blade.gameObject:SetActive(false)     
+                    self.bladeCol.gameObject:SetActive(false)
                     so:BreakAllStab()
                 end
             end
@@ -47,7 +55,19 @@ function table:DoScale(scaleUp)
     SetUpdateChannel(CL.Scheduler.UpdateChannel.FixedUpdate).actionId
 end
 
-
+function table:OnColliderEnter(collision)
+    local so = self.host.interact:GetStabObject()
+    if so and so.scalingForward and self.scaleUpDmg then
+        local ct = collision:GetContact(0)
+        self.scaleUpDmg = false
+        CL.FullBodyMuscleState.StayDmg = true
+        CL.InteractTrigger.BeginScanDmg()
+        CL.InteractTrigger.ApplyHitScanDamage(collision.collider, self.host.interact, self.host.interact.rb, ct.thisCollider,
+            ct.normal, CL.AIProxy.CampGood)
+        CL.InteractTrigger.EndHitScan()
+        CL.FullBodyMuscleState.StayDmg = false
+    end
+end
 
 --[[
 function table:UpdateSkill()
@@ -62,7 +82,7 @@ function table:UpdateSkill()
 
 
 function table:OpenSkill(attach)
-    local stillLighting = self.lightUp or CL.Scheduler.GetSchedule(scaleActId) ~= nil
+    local stillLighting = self.lightUp or CL.Scheduler.GetSchedule(self.scaleActId) ~= nil
     if (stillLighting == false) then
         if (UE.Time.time - self.soundPlayTime > 1) then        
             self.saberBeginSound:PlaySound()
@@ -79,7 +99,7 @@ end
 
 
 function table:CloseSkill()
-    if (lightUp == false) then
+    if (self.lightUp == false) then
         return
     end
 
