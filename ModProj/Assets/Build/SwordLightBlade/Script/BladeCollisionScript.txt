@@ -16,11 +16,19 @@ function BladeCollision:OnColliderEnter(collision)
         return
     end
     
+    local ct = collision:GetContact(0)
+
+    if self.interactTrigger.script then
+        local tb = self.interactTrigger.script:GetSelf()
+        if tb and tb.OnColliderEnter then
+            tb:OnColliderEnter(collision)
+        end
+    end
+    
     if collision.relativeVelocity.sqrMagnitude < self.sqrSpeed then
         return
     end
     
-    local ct = collision:GetContact(0)
     local pass = false
     local idx = 1
     while self["col" .. idx] do
