@@ -157,6 +157,7 @@ MonoBehaviour:
   selfRB: {fileID: 5530680735827433789}
   dependAttachObj: {fileID: 0}
   handPose: HoldPose
+  autoUpdateHandPose: 0
   handSide: 2
   allowTrigger: 1
   isClimbAttach: 0
@@ -171,7 +172,7 @@ GameObject:
   - component: {fileID: 1584076858294678571}
   - component: {fileID: 1964237266050798041}
   m_Layer: 15
-  m_Name: Col
+  m_Name: BladeCol
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -184,12 +185,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2004228312919527292}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.658, z: -0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 3.4160006, z: 0}
+  m_LocalScale: {x: 1, y: 1.4999999, z: 1}
   m_Children: []
-  m_Father: {fileID: 2055794741853096111}
-  m_RootOrder: 1
+  m_Father: {fileID: 4968376083440225208}
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &1964237266050798041
 CapsuleCollider:
@@ -286,7 +287,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2055794741853096111}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!108 &7084373572234186311
 Light:
@@ -445,6 +446,7 @@ MonoBehaviour:
   mountAttachs:
   - {fileID: 7118838618874565831}
   canPaint: 1
+  enhanceLevel: -1
 --- !u!114 &8449907718911971283
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -458,7 +460,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hitInfo:
-    templateName: WMD_LightBlade
+    templateName: LightSaber
     weightAmongMultiple: 1
 --- !u!114 &2310342593794322798
 MonoBehaviour:
@@ -615,6 +617,8 @@ MonoBehaviour:
       value: {fileID: 4425749615064895424}
     - name: saberEndSound
       value: {fileID: 5660442835205527482}
+    - name: bladeCol
+      value: {fileID: 1964237266050798041}
     numberList: []
     stringList: []
 --- !u!114 &6625649006482969360
@@ -709,7 +713,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4968376083440225208}
-  m_RootOrder: 13
+  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &780144386357690138
 CapsuleCollider:
