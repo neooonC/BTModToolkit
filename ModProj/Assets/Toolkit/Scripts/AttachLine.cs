@@ -2,6 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+#if UNITY_EDITOR
+using UnityEditor;
+using UnityEngine.Rendering;
+#endif
+
 
 namespace CrossLink
 {
@@ -68,16 +73,58 @@ namespace CrossLink
 #if UNITY_EDITOR
         private void OnDrawGizmosSelected()
         {
-            Gizmos.color = Color.blue;
-            Gizmos.DrawLine(transform.forward * (lineStartPoint) + transform.position,
-                transform.forward * (lineEndPoint) + transform.position);
+            Vector3 start = transform.forward * lineStartPoint + transform.position;
+            Vector3 end = transform.forward * lineEndPoint + transform.position;
+
+            Color oldColor = Handles.color;
+            CompareFunction oldZTest = Handles.zTest;
+
+            Handles.zTest = CompareFunction.Always;
+
+            Handles.color = new Color(0f, 0f, 0f, 0.9f);
+            Handles.DrawAAPolyLine(6f, start, end);
+
+            Handles.color = Color.yellow;
+            Handles.DrawAAPolyLine(3f, start, end);
 
             if (lineOffset > 0)
             {
-                //Gizmos.DrawSphere(transform.position + transform.forward * designCallingPos, 0.05f);
-
-                Gizmos.DrawSphere(transform.position, lineOffset);
+                DrawLineOffsetCylinder(start, end, lineOffset);
             }
+
+            Handles.color = oldColor;
+            Handles.zTest = oldZTest;
+        }
+
+        private void DrawLineOffsetCylinder(Vector3 start, Vector3 end, float radius)
+        {
+            Vector3 axis = end - start;
+            if (axis.sqrMagnitude < 0.000001f)
+                return;
+
+            Vector3 normal = axis.normalized;
+            Vector3 right = transform.right * radius;
+            Vector3 up = transform.up * radius;
+
+            Handles.color = new Color(1f, 0.9f, 0f, 0.16f);
+            Handles.DrawSolidDisc(start, normal, radius);
+            Handles.DrawSolidDisc(end, normal, radius);
+
+            Handles.color = new Color(0f, 0f, 0f, 0.65f);
+            Handles.DrawWireDisc(start, normal, radius);
+            Handles.DrawWireDisc(end, normal, radius);
+            Handles.DrawAAPolyLine(3f, start + right, end + right);
+            Handles.DrawAAPolyLine(3f, start - right, end - right);
+            Handles.DrawAAPolyLine(3f, start + up, end + up);
+            Handles.DrawAAPolyLine(3f, start - up, end - up);
+
+            Handles.color = new Color(1f, 0.9f, 0f, 0.85f);
+            Handles.DrawWireDisc(start, normal, radius);
+            Handles.DrawWireDisc(end, normal, radius);
+            Handles.DrawAAPolyLine(1.5f, start + right, end + right);
+            Handles.DrawAAPolyLine(1.5f, start - right, end - right);
+            Handles.DrawAAPolyLine(1.5f, start + up, end + up);
+            Handles.DrawAAPolyLine(1.5f, start - up, end - up);
         }
 #endif
     }
